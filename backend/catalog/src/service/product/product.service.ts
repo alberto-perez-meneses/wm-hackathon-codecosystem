@@ -1,90 +1,142 @@
 import { Injectable } from '@nestjs/common';
+import Typesense from 'typesense';
 
-interface Product {
+export interface Product {
     name: string;
     category: string;
     icon: string;
     price: number;
     slug: string;
+    image?: string;
+    description?: string;
     stores: string[];
 }
 
 @Injectable()
 export class ProductService {
 
-    products: Product[] = [
-        {
-            name: 'Paracetamol 500mg',
-            slug: 'paracetamol-500mg',
-            category: 'Farmacia',
-            icon: 'pill',
-            price: 25.0,
-            stores: ['plaza-central', 'norte', 'sur', 'oriente']
-        },
-        {
-            name: 'Cereal Integral',
-            slug: 'cereal-integral',
-            category: 'Abarrotes',
-            icon: 'package',
-            price: 45.0,
-            stores: ['plaza-central', 'norte', 'sur', 'oriente']
-        },
-        {
-            name: 'Detergente Líquido',
-            slug: 'detergente-liquido',
-            category: 'Limpieza',
-            icon: 'sparkles',
-            price: 30.0,
-            stores: ['plaza-central', 'norte', 'sur', 'oriente']
-        },
-        {
-            name: 'Audífonos Bluetooth',
-            slug: 'audifonos-bluetooth',
-            category: 'Electrónica',
-            icon: 'zap',
-            price: 150.0,
-            stores: ['plaza-central', 'norte', 'sur', 'oriente']
-        },
-        {
-            name: 'Ibuprofeno 200mg',
-            slug: 'ibuprofeno-200mg',
-            category: 'Farmacia',
-            icon: 'pill',
-            price: 20.0,
-            stores: ['plaza-central', 'norte', 'sur', 'oriente']
-        },
-        {
-            name: 'Leche Deslactosada',
-            slug: 'leche-deslactosada',
-            category: 'Abarrotes',
-            icon: 'package',
-            price: 35.0,
-            stores: ['plaza-central', 'norte', 'sur', 'oriente']
-        },
-        {
-            name: 'Limpiador Multiusos',
-            slug: 'limpiador-multiusos',
-            category: 'Limpieza',
-            icon: 'sparkles',
-            price: 28.0,
-            stores: ['plaza-central', 'norte', 'sur', 'oriente']
-        },
-        {
-            name: 'Cargador USB-C',
-            slug: 'cargador-usb-c',
-            category: 'Electrónica',
-            icon: 'zap',
-            price: 120.0,
-            stores: ['plaza-central', 'norte', 'sur', 'oriente']
-        }
-    ]
 
-    getProductList() {
-        return this.products;
+    typesense = new Typesense.Client({
+        nodes: [
+            {
+                host: 'localhost',
+                port: 8108,
+                protocol: 'http'
+            }
+        ],
+        apiKey: 'test',
+        connectionTimeoutSeconds: 2
+    });
+    constructor() { }
+
+    async getProductList() {
+        try {
+            const searchResults = await this.typesense
+                .collections('products')
+                .documents()
+                .search({
+                    q: "*",
+                    query_by: 'name',   // Campo de búsqueda obligatorio
+                    per_page: 30
+                });
+
+            // Si no encuentra nada
+            if (!searchResults.hits || searchResults.hits.length === 0) {
+                return { message: 'Productos no encontrados' };
+            }
+
+            // Retornar el primer resultado (o todos si lo prefieres)
+            return searchResults.hits.map(hit => hit.document);
+        } catch (error) {
+            throw new Error(`Error al buscar el producto: ${error.message}`);
+        }
     }
 
-    getProductBySlug(slug: string) {
-        return this.products.find(product => product.slug === slug);
+
+
+    async getProductBySlug(slug: string) {
+        try {
+            const searchResults = await this.typesense
+                .collections('products')
+                .documents()
+                .search({
+                    q: slug,
+                    query_by: 'slug',
+                });
+
+            // Si no encuentra nada
+            if (!searchResults.hits || searchResults.hits.length === 0) {
+                return { message: 'Producto no encontrado', slug };
+            }
+
+            // Retornar el primer resultado (o todos si lo prefieres)
+            return searchResults.hits[0].document;
+        } catch (error) {
+            throw new Error(`Error al buscar el producto: ${error.message}`);
+        }
+    }
+
+    async searchProducts(searchTerm: string) {
+        try {
+            const searchResults = await this.typesense
+                .collections('products')
+                .documents()
+                .search({
+                    q: searchTerm || '*', 
+                    query_by: 'name,category,slug', // campos en los que buscar
+                    per_page: 30
+                });
+
+            if (!searchResults.hits || searchResults.hits.length === 0) {
+                return { message: 'Productos no encontrados', searchTerm };
+            }
+
+            return searchResults.hits.map(hit => hit.document);
+        } catch (error) {
+            throw new Error(`Error al buscar productos: ${error.message}`);
+        }
+    }
+
+    async indexProducts(products: Product[]) {
+
+
+
+        const schema = {
+            name: 'products',
+            fields: [
+                { name: 'name', type: 'string' as const },
+                { name: 'category', type: 'string' as const },
+                { name: 'icon', type: 'string' as const },
+                { name: 'price', type: 'float' as const },
+                { name: 'slug', type: 'string' as const },
+                { name: 'image', type: 'string' as const, optional: true },
+                { name: 'description', type: 'string' as const, optional: true },
+                { name: 'stores', type: 'string[]' as const, facet: true }
+            ],
+            default_sorting_field: 'price'
+        };
+
+
+        try {
+            await this.typesense.collections('products').retrieve();
+            console.log('Collection already exists');
+        } catch (error) {
+            if (error.httpStatus === 404) {
+                await this.typesense.collections().create(schema);
+                console.log('Collection created');
+            } else {
+                console.error('Error checking collection existence:', error);
+                return;
+            }
+        }
+
+
+        try {
+            const returnData = await this.typesense.collections('products').documents().import(products, { action: 'upsert' });
+            console.log('Products indexed:', returnData);
+        } catch (error) {
+            console.error('Error indexing products:', error);
+        }
     }
 
 }
