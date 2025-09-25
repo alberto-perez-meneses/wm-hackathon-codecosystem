@@ -1,5 +1,10 @@
 services:
 
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "4200:4200"
   recomendations:
     build: ./backend/recomendations
     container_name: recomendations
@@ -10,7 +15,20 @@ services:
       - "5000:5000"
     volumes:
       - ./backend/recomendations/src:/application
-  
+      
+  catalog:
+    build: ./backend/catalog
+    container_name: catalog
+    ports:
+      - "3001:3001"
+
+  store:
+    build: ./backend/store
+    container_name: store
+    ports:
+      - "3000:3000"
+
+
   typesense:
     image: typesense/typesense:29.0
     restart: on-failure
