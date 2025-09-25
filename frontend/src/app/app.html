@@ -1,0 +1,28 @@
+<div class="min-h-screen flex flex-col bg-background">
+  <!-- Header -->
+  <header class="bg-primary text-primary-foreground px-4 py-4 shadow-sm">
+    <div class="flex items-center justify-between max-w-md mx-auto">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-secondary rounded-full flex items-center justify-center">
+          <span class="text-secondary-foreground font-bold text-sm">W</span>
+        </div>
+        <h1 class="text-xl font-bold">CodEcosystem</h1>
+      </div>
+      <button class="text-primary-foreground hover:bg-primary/80 p-2 rounded">
+        <!-- ícono -->
+      </button>
+    </div>
+  </header>
+
+  <!-- Contenido dinámico -->
+  <main class="flex-1">
+    <router-outlet />
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-muted text-muted-foreground px-4 py-3 shadow-inner">
+    <div class="max-w-md mx-auto text-center text-sm">
+      © 2025 Tienda — Todos los derechos reservados
+    </div>
+  </footer>
+</div>

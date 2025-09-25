@@ -1,0 +1,21 @@
+services:
+
+  recomendations:
+    build: ./backend/recomendations
+    container_name: recomendations
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend/recomendations/src:/application
+  
+  typesense:
+    image: typesense/typesense:29.0
+    restart: on-failure
+    ports:
+      - "8108:8108"
+    volumes:
+      - ./typesense-data:/data
+    command: '--data-dir /data --api-key=test --enable-cors'

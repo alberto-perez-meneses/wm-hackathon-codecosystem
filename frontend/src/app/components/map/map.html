@@ -1,0 +1,61 @@
+<!--
+<p>map works! {{store}} {{product}}</p>
+-->
+
+<!-- map.component.html -->
+<div style="position: relative; width: 100%; max-width: 600px; margin: 0 auto;">
+  <svg
+    [attr.width]="600"
+    [attr.height]="mapHeight"
+    style="border: 1px solid #ccc; display: block; margin: 0 auto;"
+  >
+  @if (storeLayout$ | async; as storeLayout) {
+    @if (storeLayout) {
+      <g>
+        @for (aisle of storeLayout.aisles; track aisle.id) {
+          <rect
+            [attr.x]="aisle.x"
+            [attr.y]="aisle.y"
+            [attr.width]="aisle.width"
+            [attr.height]="aisle.height"
+            [attr.fill]="getAisleColor(aisle.category)"
+            [attr.stroke]="'black'"
+            [attr.stroke-width]="1"
+            [attr.title]="aisle.name"
+          >
+          </rect>
+
+          <!-- Aisle Labels -->
+          <text
+            [attr.x]="aisle.x + aisle.width / 2"
+            [attr.y]="aisle.y + aisle.height / 2"
+            text-anchor="middle"
+            dominant-baseline="middle"
+            font-size="12"
+            fill="black"
+            stroke="black"
+            stroke-width="0.3"
+          >
+            {{ aisle.name }}
+          </text>
+        }
+      
+        <!-- Marker 
+        @if (hasMarker()) {
+            <g>
+                <circle [attr.cx]="markerX" [attr.cy]="markerY" r="8" fill="red" stroke="black" stroke-width="1" />
+                <text [attr.x]="markerX" [attr.y]="markerY - 15" text-anchor="middle" font-size="10" fill="black">
+                    Usted está aquí
+                </text>
+            </g>
+        }
+            -->
+      </g>
+    } @else {
+      <text x="50%" y="50%" text-anchor="middle">Cargando...</text>
+    }
+    }
+  </svg>
+</div>
+
+<a href=''>regresar</a>

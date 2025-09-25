@@ -1,0 +1,25 @@
+<input
+  type="text"
+  placeholder="Busca y localiza cualquier producto en nuestra tienda"
+  class="w-full p-3 border border-input border-primary rounded-md"
+  (input)="onSearchChange($event.target.value)"
+/>
+
+<ul class="mt-4 space-y-2">
+  @for (product of filteredProducts; track product.name) {
+    <li class="border p-3 rounded-md">
+      <div class="font-bold">{{ product.name }}</div>
+      <div class="text-sm text-muted-foreground">
+        {{ product.category }} — ${{ product.price }}
+        <br />
+        @for(store of product.stores ; track store) {
+            <hr />
+          <span class="inline-block  px-2 py-0.5 rounded-full text-xs mr-1">
+            {{ store }}
+            <a class="ml-2 text-primary hover:underline" href="/map/{{ store }}/{{product.slug}}">Ver en tienda</a>
+          </span>
+        }
+      </div>
+    </li>
+  }
+</ul>
