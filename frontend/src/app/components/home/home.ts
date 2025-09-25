@@ -5,6 +5,7 @@ import { Search } from '../search/search';
 import { Store } from '../../service/store/store';
 import { AsyncPipe } from '@angular/common';
 import { Observable } from 'rxjs';
+import { Product } from '../../service/product/product';
 
 // usar servicio de catalogo para buscar productos
 
@@ -40,72 +41,4 @@ export class Home {
     { name: 'Limpieza', icon: 'sparkles', color: 'bg-blue-50 text-blue-600 border-blue-200' },
     { name: 'Electrónica', icon: 'zap', color: 'bg-purple-50 text-purple-600 border-purple-200' },
   ];
-
- products = [
-      {
-        name: 'Paracetamol 500mg',
-        slug: 'paracetamol-500mg',
-        category: 'Farmacia',
-        icon: 'pill',
-        price: 25.0,
-        stores: ['plaza-central', 'norte', 'sur', 'oriente']
-      },
-      {
-        name: 'Cereal Integral',
-        slug: 'cereal-integral',
-        category: 'Abarrotes',
-        icon: 'package',
-        price: 45.0,
-        stores: ['plaza-central', 'norte', 'sur', 'oriente']
-      },
-      {
-        name: 'Detergente Líquido',
-        slug: 'detergente-liquido',
-        category: 'Limpieza',
-        icon: 'sparkles',
-        price: 30.0,
-        stores: ['plaza-central', 'norte', 'sur', 'oriente']
-      },
-      {
-        name: 'Audífonos Bluetooth',
-        slug: 'audifonos-bluetooth',
-        category: 'Electrónica',
-        icon: 'zap',
-        price: 150.0,
-        stores: ['plaza-central', 'norte', 'sur', 'oriente']
-      },
-      {
-        name: 'Ibuprofeno 200mg',
-        slug: 'ibuprofeno-200mg',
-        category: 'Farmacia',
-        icon: 'pill',
-        price: 20.0,
-        stores: ['plaza-central', 'norte', 'sur', 'oriente']
-      },
-      {
-        name: 'Leche Deslactosada',
-        slug: 'leche-deslactosada',
-        category: 'Abarrotes',
-        icon: 'package',
-        price: 35.0,
-        stores: ['plaza-central', 'norte', 'sur', 'oriente']
-      },
-      {
-        name: 'Limpiador Multiusos',
-        slug: 'limpiador-multiusos',
-        category: 'Limpieza',
-        icon: 'sparkles',
-        price: 28.0,
-        stores: ['plaza-central', 'norte', 'sur', 'oriente']
-      },
-      {
-        name: 'Cargador USB-C',
-        slug: 'cargador-usb-c',
-        category: 'Electrónica',
-        icon: 'zap',
-        price: 120.0,
-        stores: ['plaza-central', 'norte', 'sur', 'oriente']
-      }
-    ]
-
 }

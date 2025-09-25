@@ -1,7 +1,8 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ProductService } from './service/product/product.service';
 import { CategoriesService } from './service/categories/categories.service';
+import { Product } from './service/product/product.service';
 
 @Controller("v1/catalog")
 export class AppController {
@@ -11,10 +12,7 @@ export class AppController {
     private readonly categoriesService: CategoriesService
   ) { }
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
+
 
   @Get("products")
   getStoreList(): any {
@@ -22,11 +20,24 @@ export class AppController {
   }
 
   @Get("products/:slug")
-  getStore(@Param("slug") slug: string): any {
+  async getStore(@Param("slug") slug: string) {
     return this.productService.getProductBySlug(slug);
   }
   @Get("categories")
   getCategories(): any {
     return this.categoriesService.getCategories();
+  }
+
+  @Put("index")
+  async indexProducts(@Body() products: Product[]) {
+    return this.productService.indexProducts(products);
+  }
+
+  @Get()
+  async getProducts(@Query('q') q?: string) {
+    if (q) {
+      return this.productService.searchProducts(q);
+    }
+    return this.productService.getProductList();
   }
 }

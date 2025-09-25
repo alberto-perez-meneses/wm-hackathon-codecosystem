@@ -1,6 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
+import { Component, effect, inject, OnDestroy, OnInit } from '@angular/core';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Product as ProductService } from '../../service/product/product';
 
 // usar servicio de catalogo para buscar productos
 
@@ -22,11 +23,21 @@ interface Product {
 })
 export class Search implements OnInit, OnDestroy {
 
+  private productService = inject(ProductService);
+  products$: Observable<Product[]> | undefined;
+
   products: Product[] = [];
 
   filteredProducts = [...this.products]; // resultados de búsqueda
   private searchSubject = new Subject<string>();
   private subscription?: Subscription;
+  
+  constructor() {
+    effect(() => {
+      this.products$ = this.productService.getProductList();
+    });
+    
+  }
 
   ngOnInit() {
     // Configuramos el debounce de 2 segundos
@@ -46,6 +57,7 @@ export class Search implements OnInit, OnDestroy {
     this.searchSubject.next(searchTerm);
   }
 
+  /*
   // Método que ejecuta la búsqueda real
   private buscarProducto(searchTerm: string) {
     // esto tiene que ser un servicio que consulte un backend
@@ -128,5 +140,23 @@ export class Search implements OnInit, OnDestroy {
       p.name.toLowerCase().includes(term)
     );
   }
+  */
+
+  private buscarProducto(searchTerm: string) {
+  this.productService.getProductList().subscribe((products) => {
+    this.products = products;
+
+    if (!searchTerm.trim()) {
+      this.filteredProducts = [...this.products];
+      return;
+    }
+
+    const term = searchTerm.toLowerCase();
+    this.filteredProducts = this.products.filter((p) =>
+      p.name.toLowerCase().includes(term)
+    );
+  });
+}
+
 
 }
