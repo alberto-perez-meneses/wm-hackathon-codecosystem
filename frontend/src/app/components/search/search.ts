@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Product as ProductService } from '../../service/product/product';
@@ -32,6 +32,9 @@ export class Search implements OnInit, OnDestroy {
   private searchSubject = new Subject<string>();
   private subscription?: Subscription;
   
+
+  @Input() storeId: string | null = null;
+
   constructor() {
     effect(() => {
       this.products$ = this.productService.getProductList();
@@ -56,92 +59,7 @@ export class Search implements OnInit, OnDestroy {
   onSearchChange(searchTerm: string) {
     this.searchSubject.next(searchTerm);
   }
-
   /*
-  // Método que ejecuta la búsqueda real
-  private buscarProducto(searchTerm: string) {
-    // esto tiene que ser un servicio que consulte un backend
-    console.log('Buscando producto:', searchTerm);
-    this.products = [
-      {
-        name: 'Paracetamol 500mg',
-        slug: 'paracetamol-500mg',
-        category: 'Farmacia',
-        icon: 'pill',
-        price: 25.0,
-        stores: ['plaza-central', 'norte', 'sur', 'oriente']
-      },
-      {
-        name: 'Cereal Integral',
-        slug: 'cereal-integral',
-        category: 'Abarrotes',
-        icon: 'package',
-        price: 45.0,
-        stores: ['plaza-central', 'norte', 'sur', 'oriente']
-      },
-      {
-        name: 'Detergente Líquido',
-        slug: 'detergente-liquido',
-        category: 'Limpieza',
-        icon: 'sparkles',
-        price: 30.0,
-        stores: ['plaza-central', 'norte', 'sur', 'oriente']
-      },
-      {
-        name: 'Audífonos Bluetooth',
-        slug: 'audifonos-bluetooth',
-        category: 'Electrónica',
-        icon: 'zap',
-        price: 150.0,
-        stores: ['plaza-central', 'norte', 'sur', 'oriente']
-      },
-      {
-        name: 'Ibuprofeno 200mg',
-        slug: 'ibuprofeno-200mg',
-        category: 'Farmacia',
-        icon: 'pill',
-        price: 20.0,
-        stores: ['plaza-central', 'norte', 'sur', 'oriente']
-      },
-      {
-        name: 'Leche Deslactosada',
-        slug: 'leche-deslactosada',
-        category: 'Abarrotes',
-        icon: 'package',
-        price: 35.0,
-        stores: ['plaza-central', 'norte', 'sur', 'oriente']
-      },
-      {
-        name: 'Limpiador Multiusos',
-        slug: 'limpiador-multiusos',
-        category: 'Limpieza',
-        icon: 'sparkles',
-        price: 28.0,
-        stores: ['plaza-central', 'norte', 'sur', 'oriente']
-      },
-      {
-        name: 'Cargador USB-C',
-        slug: 'cargador-usb-c',
-        category: 'Electrónica',
-        icon: 'zap',
-        price: 120.0,
-        stores: ['plaza-central', 'norte', 'sur', 'oriente']
-      }
-    ]
-
-
-    if (!searchTerm.trim()) {
-      this.filteredProducts = [...this.products];
-      return;
-    }
-
-    const term = searchTerm.toLowerCase();
-    this.filteredProducts = this.products.filter((p) =>
-      p.name.toLowerCase().includes(term)
-    );
-  }
-  */
-
   private buscarProducto(searchTerm: string) {
   this.productService.getProductList().subscribe((products) => {
     this.products = products;
@@ -157,6 +75,28 @@ export class Search implements OnInit, OnDestroy {
     );
   });
 }
+  */
+
+private buscarProducto(searchTerm: string) {
+    this.productService.getProductList().subscribe((products) => {
+      this.products = products;
+
+      if (!searchTerm.trim()) {
+        this.filteredProducts = [...this.products];
+        return;
+      }
+
+      const term = searchTerm.toLowerCase();
+
+      // Filtrar por nombre y por storeId si está presente
+      this.filteredProducts = this.products.filter((p) => {
+        const nameMatch = p.name.toLowerCase().includes(term);
+        const storeMatch =
+          !this.storeId || p.stores.includes(this.storeId); //Si this.storeId tiene un valor solo busca los productos de ese storeId
+        return nameMatch && storeMatch;
+      });
+    });
+  }
 
 
 }

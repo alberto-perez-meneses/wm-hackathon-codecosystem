@@ -3,8 +3,11 @@ import requests
 from PIL import Image
 from transformers import BlipProcessor, BlipForConditionalGeneration, BlipForQuestionAnswering
 import io
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
+
 
 # Load models and processors (do this ONCE when the app starts)
 blip_caption_processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
@@ -51,7 +54,7 @@ def process_image():
         image_file = request.files['image']
 
         # Read the image
-        img = Image.open(io.BytesIO(image_file.read())).convert('RGB') # Correctly opens the image
+        img = Image.open(io.BytesIO(image_file.read())).convert('RGB') 
 
         # Process the image with BLIP captioning
         caption = process_image_captioning(img)
@@ -71,4 +74,4 @@ def process_image():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000) # Make the server publicly available on your network.
+    app.run(debug=True, host='0.0.0.0', port=5000) 
