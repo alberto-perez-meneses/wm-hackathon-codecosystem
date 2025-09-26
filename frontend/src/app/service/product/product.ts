@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface Product {
     name: string;
@@ -23,14 +24,14 @@ export class Product {
 
   getProductList = (searchTerm?: string): Observable<Product[]> => {
   const url = searchTerm
-    ? `http://localhost:3001/v1/catalog/products?q=${encodeURIComponent(searchTerm)}`
-    : 'http://localhost:3001/v1/catalog/products';
+    ? `${environment.catalogUrl}/v1/catalog/products?q=${encodeURIComponent(searchTerm)}`
+    : `${environment.catalogUrl}/v1/catalog/products`;
 
   return this.http.get<Product[]>(url, { priority: 'low' });
 };
 
   getProductBySlug = (slug: string): Observable<Product> => {
-    return this.http.get<Product>(`http://localhost:3001/v1/catalog/products/${slug}`,
+    return this.http.get<Product>(`${environment.catalogUrl}/v1/catalog/products/${slug}`,
       {
         priority:'low'
       }

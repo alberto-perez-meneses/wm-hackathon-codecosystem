@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 interface Aisle {
   id: string
@@ -34,7 +35,7 @@ export class Store {
     private http = inject(HttpClient);
     
    getStoreList = (): Observable<StoreList[]> => {
-    return this.http.get<StoreList[]>('http://localhost:3000/v1/store/list',
+    return this.http.get<StoreList[]>(`${environment.storeUrl}/v1/store/list`,
       {
         priority:'low'
       }
@@ -42,7 +43,7 @@ export class Store {
   }
 
   getStore = (storeId: string): Observable<StoreLayout> => {
-    return this.http.get<StoreLayout>(`http://localhost:3000/v1/store/${storeId}`,
+    return this.http.get<StoreLayout>(`${environment.storeUrl}/v1/store/${storeId}`,
       {
         priority:'low'
       }
