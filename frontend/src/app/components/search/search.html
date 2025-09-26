@@ -1,6 +1,6 @@
 <input
   type="text"
-  placeholder="Busca y localiza cualquier producto en nuestra tienda"
+  placeholder="Busca y localiza cualquier producto en nuestras tiendas"
   class="w-full p-3 border border-primary rounded-md"
   (input)="onSearchChange($event.target.value)"
 />
@@ -10,15 +10,18 @@
     <li class="border p-3 rounded-md">
       <div class="font-bold">{{ product.name }}</div>
       <div class="text-sm text-muted-foreground">
-        {{ product.category }} — ${{ product.price }}
+        Sección - {{ product.category }}
         <br />
+        Se encuentra en las tiendas:
         @for(store of product.stores ; track store) {
-            <hr />
+            <br />
           <span class="inline-block  px-2 py-0.5 rounded-full text-xs mr-1">
             {{ store }}
             <a class="ml-2 text-primary hover:underline" href="/map/{{ store }}/{{product.slug}}">Ver en tienda</a>
           </span>
         }
+
+        <p class="text-blue-500 text-right pr-10">Precío - ${{ product.price }}</p> 
       </div>
     </li>
   }
