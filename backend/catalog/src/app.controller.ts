@@ -1,5 +1,4 @@
 import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
-import { AppService } from './app.service';
 import { ProductService } from './service/product/product.service';
 import { CategoriesService } from './service/categories/categories.service';
 import { Product } from './service/product/product.service';
@@ -7,7 +6,6 @@ import { Product } from './service/product/product.service';
 @Controller("v1/catalog")
 export class AppController {
   constructor(
-    private readonly appService: AppService,
     private readonly productService: ProductService,
     private readonly categoriesService: CategoriesService
   ) { }

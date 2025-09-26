@@ -5,9 +5,7 @@ import { Search } from '../search/search';
 import { Store } from '../../service/store/store';
 import { AsyncPipe } from '@angular/common';
 import { Observable } from 'rxjs';
-import { Product } from '../../service/product/product';
-
-// usar servicio de catalogo para buscar productos
+import { UploadImage } from '../upload-image/upload-image';
 
 interface StoreList {
   id :string
@@ -17,7 +15,7 @@ interface StoreList {
 
 @Component({
   selector: 'app-home',
-  imports: [FormsModule , Search,AsyncPipe],
+  imports: [ FormsModule , Search , UploadImage , AsyncPipe ],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
@@ -27,6 +25,7 @@ export class Home {
   private storeService = inject(Store);
 
   stores$: Observable<StoreList[]> | undefined;
+  selectedStoreId: string | null = null;
   
   constructor() {
     effect(() => {
@@ -35,10 +34,10 @@ export class Home {
     
   }
 
-  categories = [
-    { name: 'Farmacia', icon: 'pill', color: 'bg-red-50 text-red-600 border-red-200' },
-    { name: 'Abarrotes', icon: 'package', color: 'bg-green-50 text-green-600 border-green-200' },
-    { name: 'Limpieza', icon: 'sparkles', color: 'bg-blue-50 text-blue-600 border-blue-200' },
-    { name: 'Electrónica', icon: 'zap', color: 'bg-purple-50 text-purple-600 border-purple-200' },
-  ];
+  onStoreSelected(storeId: any) {
+    // Manejar el evento de cambio del select
+    this.selectedStoreId = storeId.target.value;
+  }
+
+
 }

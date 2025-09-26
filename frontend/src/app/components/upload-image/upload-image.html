@@ -1,0 +1,35 @@
+<div class="p-4 border rounded-md">
+  <h2 class="font-bold mb-2">Subir imagen</h2>
+
+  <input
+    type="file"
+    accept="image/jpeg, image/png"
+    (change)="onFileSelected($event)"
+  />
+
+  <button
+    class="mt-2 px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+    [disabled]="!selectedFile || loading"
+    (click)="onUpload()"
+  >
+    {{ loading ? 'Procesando...' : 'Subir' }}
+  </button>
+
+  @if (response) {
+    <div class="mt-4 p-3 border rounded bg-gray-50">
+      <p><strong>Caption:</strong> {{ response.caption }}</p>
+      <p><strong>Respuestas:</strong></p>
+      <ul class="list-disc pl-5">
+        @for (ans of response.vqa_answers; track ans) {
+          <li>{{ ans }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  @if (error) {
+    <div class="mt-4 text-red-600">
+      {{ error }}
+    </div>
+  }
+</div>
