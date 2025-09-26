@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { map, Observable } from 'rxjs';
 import { Store } from '../../service/store/store';
 import { AsyncPipe } from '@angular/common';
+import { Product } from '../../service/product/product';
 
 interface Aisle {
   id: string
@@ -34,9 +35,11 @@ interface StoreLayout {
 export class Map implements OnInit {
   private route = inject(ActivatedRoute);
   private storeService = inject(Store);
+  private productService = inject(Product);
 
 
    stores$: Observable<StoreLayout> | undefined;
+   productDetail$: Observable<Product> | undefined;
 
   // Observables que reaccionan a cambios en la URL
   store$ = this.route.params.pipe(
@@ -65,7 +68,8 @@ export class Map implements OnInit {
   
    effect(() => {
       this.storeLayout$ = this.storeService.getStore(this.store);
-         //console.log(this.storeLayout);
+      this.productDetail$ = this.productService.getProductBySlug(this.product);
+         console.log(this.productDetail$);
     });
   }
   

@@ -30,7 +30,7 @@ export class Product {
 };
 
   getProductBySlug = (slug: string): Observable<Product> => {
-    return this.http.get<Product>(`http://localhost:3000/v1/catalog/products/${slug}`,
+    return this.http.get<Product>(`http://localhost:3001/v1/catalog/products/${slug}`,
       {
         priority:'low'
       }
