@@ -59,23 +59,6 @@ export class Search implements OnInit, OnDestroy {
   onSearchChange(searchTerm: string) {
     this.searchSubject.next(searchTerm);
   }
-  /*
-  private buscarProducto(searchTerm: string) {
-  this.productService.getProductList().subscribe((products) => {
-    this.products = products;
-
-    if (!searchTerm.trim()) {
-      this.filteredProducts = [...this.products];
-      return;
-    }
-
-    const term = searchTerm.toLowerCase();
-    this.filteredProducts = this.products.filter((p) =>
-      p.name.toLowerCase().includes(term)
-    );
-  });
-}
-  */
 
 private buscarProducto(searchTerm: string) {
     this.productService.getProductList().subscribe((products) => {

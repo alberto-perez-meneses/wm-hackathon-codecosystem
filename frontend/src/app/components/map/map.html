@@ -1,61 +1,65 @@
-<!--
-<p>map works! {{store}} {{product}}</p>
--->
-
 <!-- map.component.html -->
-<div style="position: relative; width: 100%; max-width: 600px; margin: 0 auto;">
-  <svg
-    [attr.width]="600"
-    [attr.height]="mapHeight"
-    style="border: 1px solid #ccc; display: block; margin: 0 auto;"
-  >
-  @if (storeLayout$ | async; as storeLayout) {
-    @if (storeLayout) {
-      <g>
-        @for (aisle of storeLayout.aisles; track aisle.id) {
-          <rect
-            [attr.x]="aisle.x"
-            [attr.y]="aisle.y"
-            [attr.width]="aisle.width"
-            [attr.height]="aisle.height"
-            [attr.fill]="getAisleColor(aisle.category)"
-            [attr.stroke]="'black'"
-            [attr.stroke-width]="1"
-            [attr.title]="aisle.name"
-          >
-          </rect>
+<div class="relative w-full max-w-2xl mx-auto">
 
-          <!-- Aisle Labels -->
-          <text
-            [attr.x]="aisle.x + aisle.width / 2"
-            [attr.y]="aisle.y + aisle.height / 2"
-            text-anchor="middle"
-            dominant-baseline="middle"
-            font-size="12"
-            fill="black"
-            stroke="black"
-            stroke-width="0.3"
-          >
-            {{ aisle.name }}
-          </text>
-        }
-      
-        <!-- Marker 
-        @if (hasMarker()) {
-            <g>
-                <circle [attr.cx]="markerX" [attr.cy]="markerY" r="8" fill="red" stroke="black" stroke-width="1" />
-                <text [attr.x]="markerX" [attr.y]="markerY - 15" text-anchor="middle" font-size="10" fill="black">
-                    Usted está aquí
-                </text>
-            </g>
-        }
-            -->
+  <div class="mt-5 text-center">
+    @if (productDetail$ | async; as productDetail) {
+
+    @if(productDetail.image) {
+    <div class="w-52 h-36 mx-auto">
+      <svg class="w-full h-full" viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="10" width="180" height="130" rx="10" stroke="#aaa" stroke-width="3" />
+        <path d="M50 40L150 110" stroke="#aaa" stroke-width="5" stroke-linecap="round" />
+        <path d="M150 40L50 110" stroke="#aaa" stroke-width="5" stroke-linecap="round" />
+        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="16" fill="#888">Imagen No
+          Encontrada</text>
+      </svg>
+    </div>
+    }
+
+    <h2 class="text-2xl font-semibold">{{ productDetail.name }}</h2>
+    <p class="text-gray-700">{{ productDetail.description }}</p>
+    <p class="text-gray-800"><strong>Precio:</strong> ${{ productDetail.price }}</p>
+    <p class="text-gray-600"><strong>Categoría:</strong> {{ productDetail.category }}</p>
+
+    }
+    <a href='' class="block mt-4 text-blue-500 hover:underline">regresar</a>
+  </div>
+
+  <svg [attr.width]="600" [attr.height]="mapHeight" class="border border-gray-300 block mx-auto">
+    @if (storeLayout$ | async; as storeLayout) {
+    @if (storeLayout) {
+    <g>
+      @for (aisle of storeLayout.aisles; track aisle.id) {
+      <rect [attr.x]="aisle.x" [attr.y]="aisle.y" [attr.width]="aisle.width" [attr.height]="aisle.height"
+        [attr.fill]="getAisleColor(aisle.category)" [attr.stroke]="'black'" [attr.stroke-width]="1"
+        [attr.title]="aisle.name">
+      </rect>
+
+      <!-- Aisle Labels -->
+      <text [attr.x]="aisle.x + aisle.width / 2" [attr.y]="aisle.y + aisle.height / 2" text-anchor="middle"
+        dominant-baseline="middle" font-size="12" fill="black" stroke="black" stroke-width="0.3">
+        {{ aisle.name }}
+      </text>
+      <!-- Marker -->
+      @if (productDetail$ | async; as productDetail) {
+      @if (aisle.name === productDetail?.category) {
+      <g>
+        <!--<circle [attr.cx]="aisle.x + aisle.width / 2" [attr.cy]="aisle.y + aisle.height" r="8" fill="blue" stroke="black" stroke-width="1" />
+      -->
+        <text [attr.x]="aisle.x + aisle.width / 2" [attr.y]="aisle.y + aisle.height + 10" text-anchor="middle" font-size="10" fill="black">
+          El producto está aquí
+        </text>
       </g>
+      }
+      }
+      <!-- Marker -->
+      }
+
+
+    </g>
     } @else {
-      <text x="50%" y="50%" text-anchor="middle">Cargando...</text>
+    <text x="50%" y="50%" text-anchor="middle">Cargando...</text>
     }
     }
   </svg>
 </div>
-
-<a href=''>regresar</a>
