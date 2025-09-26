@@ -1,0 +1,36 @@
+C4Container
+  title Container Diagram: E-commerce Platform
+
+  Person(user, "User", "Shopper using the e-commerce platform")
+
+  Container_Boundary(front, "Frontend Application") {
+  System_Ext(cdn, "CDN", "Content Delivery Network", "Delivers static assets to users")
+  System_Ext(firewall, "Firewall", "Security system", "Protects the application from external threats")
+  Container(frontend, "Frontend", "Angular", "Single Page Application", "Delivers the static web application to the user's browser")
+  }
+  Container_Boundary(apim, "API Management") {
+  Container(api_gateway, "API Gateway", "Node.js/Express", "API Gateway", "Routes request to backend")
+  }
+  Container_Boundary(api, "API Application") {
+  ContainerDb(typesense, "Typesense", "Typesense", "Search Engine", "Stores product information for search")
+
+  Container(recomendations_service, "Recomendations Service", "Python/Flask", "API Application", "Provides product recomendations")
+  Container(catalog_service, "Catalog Service", "Node.js/Express", "API Application", "Manages product catalog")
+  Container(store_service, "Store Service", "Node.js/Express", "API Application", "Manages inventory and orders")
+  }
+
+  Rel(user, frontend, "Uses", "Via web browser")
+  Rel(frontend, cdn, "Gets static assets from")
+  Rel(cdn, firewall, "Protected by")
+  Rel(firewall, frontend, "Passes request to")
+  Rel(frontend, api_gateway, "Makes API calls to", "HTTPS")
+  Rel(api_gateway, recomendations_service, "Requests Recomendations", "HTTPS")
+  Rel(api_gateway, catalog_service, "Requests Catalog Data", "HTTPS")
+  Rel(api_gateway, store_service, "Requests Order & Inventory Data", "HTTPS")
+  Rel(catalog_service, typesense, "Queries for Product Information", "HTTPS")
+  Rel(recomendations_service, typesense, "Queries for Product Information", "HTTPS")
+
+  UpdateRelStyle(cdn, user, $offsetY="-140")
+  UpdateElementStyle(cdn, $fontColor="grey", $bgColor="lightgrey", $borderColor="grey")
+  UpdateElementStyle(firewall, $fontColor="grey", $bgColor="lightgrey", $borderColor="grey")
+  UpdateElementStyle(api_gateway, $fontColor="grey", $bgColor="lightgrey", $borderColor="grey")
