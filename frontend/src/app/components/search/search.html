@@ -4,6 +4,9 @@
   class="w-full p-3 border border-primary rounded-md"
   (input)="onSearchChange($event.target.value)"
 />
+<!-- experimental agregar busqueda por imagenes -->
+<app-upload-image (propagateSearchWord)="imageSetWordAndChanged($event)"></app-upload-image>
+<!---->
 
 <ul class="mt-4 space-y-2">
   @for (product of filteredProducts; track product.name) {

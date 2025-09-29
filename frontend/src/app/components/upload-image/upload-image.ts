@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ImageResponse, ImageService } from '../../service/image/image-service';
 
@@ -11,10 +11,12 @@ import { ImageResponse, ImageService } from '../../service/image/image-service';
 export class UploadImage {
 
 
-   selectedFile: File | null = null;
+  selectedFile: File | null = null;
   response: ImageResponse | null = null;
   loading = false;
   error: string | null = null;
+
+  propagateSearchWord= output<string>();
 
   constructor(private imageService: ImageService) {}
 
@@ -34,6 +36,7 @@ export class UploadImage {
     this.imageService.processImage(this.selectedFile).subscribe({
       next: (res) => {
         this.response = res;
+        this.propagateSearchWord.emit(this.response.caption || '');
         this.loading = false;
       },
       error: (err) => {

@@ -15,7 +15,7 @@ interface StoreList {
 
 @Component({
   selector: 'app-home',
-  imports: [ FormsModule , Search , UploadImage , AsyncPipe ],
+  imports: [ FormsModule , Search  , AsyncPipe ],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
