@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 export interface ImageResponse {
   caption: string;
   vqa_answers: string[];
+  search_word: string;
 }
 
 @Injectable({

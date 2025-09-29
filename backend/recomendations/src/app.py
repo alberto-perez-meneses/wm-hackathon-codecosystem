@@ -39,6 +39,13 @@ def process_image_vqa(image):
     print("VQA Answers:", answers)
     return answers
 
+def generate_search_word(image):
+    """Performs search word asking to blip"""
+    question = "What are the best keyword to search for this product? Respond with a maximum of one word that must be translated into Spanish."
+    inputs = blip_vqa_processor(image, question, return_tensors="pt")
+    out = blip_vqa_model.generate(**inputs)
+    return blip_vqa_processor.decode(out[0], skip_special_tokens=True)
+
 
 @app.route('/process_image', methods=['POST'])
 def process_image():
@@ -61,11 +68,15 @@ def process_image():
 
         # Process the image with BLIP VQA
         vqa_answers = process_image_vqa(img)
+        
+        # Generate search word
+        search_word = generate_search_word(img)
 
 
         return jsonify({
             'caption': caption,
-            'vqa_answers': vqa_answers
+            'vqa_answers': vqa_answers,
+            'search_word': search_word
         })
 
     except Exception as e:

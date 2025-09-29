@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, effect, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, Input, OnDestroy, OnInit, signal } from '@angular/core';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Product as ProductService } from '../../service/product/product';
+import { UploadImage } from '../upload-image/upload-image';
 
 // usar servicio de catalogo para buscar productos
 
@@ -16,12 +17,14 @@ interface Product {
 
 @Component({
   selector: 'app-search',
-  imports: [],
+  imports: [UploadImage],
   templateUrl: './search.html',
   standalone: true,
   styleUrl: './search.css'
 })
 export class Search implements OnInit, OnDestroy {
+
+    readonly searchWord = signal<string>('pa');
 
   private productService = inject(ProductService);
   products$: Observable<Product[]> | undefined;
@@ -55,31 +58,26 @@ export class Search implements OnInit, OnDestroy {
     this.subscription?.unsubscribe();
   }
 
+  imageSetWordAndChanged(event: any) {
+    //console.log('Palabra clave recibida en Search:', event);
+    this.searchWord.set(event);
+    this.buscarProducto(event);
+  }
+
   // Método que recibe el texto del input
   onSearchChange(searchTerm: string) {
     this.searchSubject.next(searchTerm);
   }
 
 private buscarProducto(searchTerm: string) {
-    this.productService.getProductList().subscribe((products) => {
+    this.productService.getProductList(searchTerm).subscribe((products) => {
       this.products = products;
-
-      if (!searchTerm.trim()) {
-        this.filteredProducts = [...this.products];
-        return;
-      }
-
-      const term = searchTerm.toLowerCase();
-
-      // Filtrar por nombre y por storeId si está presente
-      this.filteredProducts = this.products.filter((p) => {
-        const nameMatch = p.name.toLowerCase().includes(term);
-        const storeMatch =
-          !this.storeId || p.stores.includes(this.storeId); //Si this.storeId tiene un valor solo busca los productos de ese storeId
-        return nameMatch && storeMatch;
-      });
+      console.log('Productos recibidos:', this.products);
+      this.filteredProducts = [...this.products];
     });
+  
   }
+  
 
 
 }
