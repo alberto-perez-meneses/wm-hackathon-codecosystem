@@ -11,12 +11,6 @@ export class AppController {
   ) { }
 
 
-
-  @Get("products")
-  getStoreList(): any {
-    return this.productService.getProductList();
-  }
-
   @Get("products/:slug")
   async getStore(@Param("slug") slug: string) {
     return this.productService.getProductBySlug(slug);
@@ -31,7 +25,7 @@ export class AppController {
     return this.productService.indexProducts(products);
   }
 
-  @Get()
+  @Get("products")
   async getProducts(@Query('q') q?: string) {
     if (q) {
       return this.productService.searchProducts(q);

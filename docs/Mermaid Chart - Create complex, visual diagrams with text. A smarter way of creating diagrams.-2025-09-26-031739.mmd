@@ -1,36 +1,54 @@
 C4Container
-  title Container Diagram: E-commerce Platform
+  title Container Diagram: E-commerce Platform with Scalability
 
   Person(user, "User", "Shopper using the e-commerce platform")
 
   Container_Boundary(front, "Frontend Application") {
-  System_Ext(cdn, "CDN", "Content Delivery Network", "Delivers static assets to users")
   System_Ext(firewall, "Firewall", "Security system", "Protects the application from external threats")
-  Container(frontend, "Frontend", "Angular", "Single Page Application", "Delivers the static web application to the user's browser")
+  
+  System_Ext(cdn, "CDN", "Content Delivery Network", "Delivers static assets to users")
+  Container(frontend, "Frontend", "Angular", "Single Page Application", "Delivers the static web application to the user's browser (Multiple Instances)")
   }
+
   Container_Boundary(apim, "API Management") {
-  Container(api_gateway, "API Gateway", "Node.js/Express", "API Gateway", "Routes request to backend")
+  Container(api_gateway_lb, "API Gateway Load Balancer", "NGINX/HAProxy", "Load Balancer", "Distributes traffic to API Gateway instances")
+  Container(api_gateway, "API Gateway", "Node.js/Express", "API Gateway (Multiple Instances)", "Routes request to backend")
   }
+
+  Container_Boundary(load_balancer, "load balancer") {
+    System_Ext(catalog_service_lb, "Catalog Service Load Balancer", "NGINX/HAProxy", "Load Balancer", "Distributes traffic to Catalog Service instances")
+    System_Ext(recomendations_service_lb, "Recomendations Service Load Balancer", "NGINX/HAProxy", "Load Balancer", "Distributes traffic to Recomendations Service instances")
+    System_Ext(store_service_lb, "Store Service Load Balancer", "NGINX/HAProxy", "Load Balancer", "Distributes traffic to Store Service instances")
+  }
+
   Container_Boundary(api, "API Application") {
-  ContainerDb(typesense, "Typesense", "Typesense", "Search Engine", "Stores product information for search")
-
-  Container(recomendations_service, "Recomendations Service", "Python/Flask", "API Application", "Provides product recomendations")
-  Container(catalog_service, "Catalog Service", "Node.js/Express", "API Application", "Manages product catalog")
-  Container(store_service, "Store Service", "Node.js/Express", "API Application", "Manages inventory and orders")
+  ContainerDb(typesense, "Typesense Cluster", "Typesense", "Search Engine", "Stores product information for search (Sharnding)")
+  Container(catalog_service, "Catalog Service", "Node.js/Express", "API Application (Multiple Instances)", "Manages product catalog")
+  Container(recomendations_service, "Recomendations Service", "Python/Flask", "API Application (Multiple Instances)", "Provides product recomendations")
+  Container(store_service, "Store Service", "Node.js/Express", "API Application (Multiple Instances)", "Manages inventory and orders")
   }
 
-  Rel(user, frontend, "Uses", "Via web browser")
-  Rel(frontend, cdn, "Gets static assets from")
-  Rel(cdn, firewall, "Protected by")
-  Rel(firewall, frontend, "Passes request to")
-  Rel(frontend, api_gateway, "Makes API calls to", "HTTPS")
-  Rel(api_gateway, recomendations_service, "Requests Recomendations", "HTTPS")
-  Rel(api_gateway, catalog_service, "Requests Catalog Data", "HTTPS")
-  Rel(api_gateway, store_service, "Requests Order & Inventory Data", "HTTPS")
-  Rel(catalog_service, typesense, "Queries for Product Information", "HTTPS")
-  Rel(recomendations_service, typesense, "Queries for Product Information", "HTTPS")
+  Rel(user, firewall, "Uses", "Via web browser")
+  Rel(frontend, cdn, "Set static assets to cdn")
+  Rel(firewall,cdn , "Protected by")
+  Rel(frontend, api_gateway_lb, "Makes API calls to", "HTTPS")
+  Rel(api_gateway_lb, api_gateway, "Distributes traffic to")
 
+  Rel(api_gateway, recomendations_service_lb, "Requests Recomendations", "HTTPS")
+  Rel(api_gateway, catalog_service_lb, "Requests Catalog Data", "HTTPS")
+ 
+  Rel(recomendations_service_lb, recomendations_service, "Distributes traffic to")
+  Rel(catalog_service_lb, catalog_service, "Distributes traffic to")
+  Rel(store_service_lb, store_service, "Distributes traffic to")
+
+  Rel(catalog_service, typesense, "Queries for Product Information", "HTTPS")
+  Rel(api_gateway, store_service_lb, "Queries for Product Information", "HTTPS")
+
+UpdateLayoutConfig($c4ShapeInRow="1", $c4BoundaryInRow="4")
   UpdateRelStyle(cdn, user, $offsetY="-140")
   UpdateElementStyle(cdn, $fontColor="grey", $bgColor="lightgrey", $borderColor="grey")
   UpdateElementStyle(firewall, $fontColor="grey", $bgColor="lightgrey", $borderColor="grey")
   UpdateElementStyle(api_gateway, $fontColor="grey", $bgColor="lightgrey", $borderColor="grey")
+  UpdateElementStyle(frontend_lb, $fontColor="grey", $bgColor="lightgrey", $borderColor="grey")
+  UpdateElementStyle(api_gateway_lb, $fontColor="grey", $bgColor="lightgrey", $borderColor="grey")
+  
