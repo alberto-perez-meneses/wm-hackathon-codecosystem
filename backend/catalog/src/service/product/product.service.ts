@@ -19,7 +19,7 @@ export class ProductService {
     typesense = new Typesense.Client({
         nodes: [
             {
-                host: 'typesense',
+                host: 'localhost',
                 port: 8108,
                 protocol: 'http'
             }
